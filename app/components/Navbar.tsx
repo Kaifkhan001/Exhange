@@ -7,12 +7,12 @@ import { useRouter } from 'next/navigation'
 const Navbar = () => {
   const router = useRouter();
   return (
-    <nav className=" dark:bg-gray-900 w-full bg-red-600 ">
+    <nav className=" dark:bg-gray-900 w-full ">
         <div className="flex flex-wrap justify-between   w-full items-center mx-auto p-4">
                <div className='flex gap-5 items-center justify-center'>
                  <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Exchange</span>
                  <span onClick={() => router.push('/market')} className='cursor-pointer hover:text-gray-600'>Market</span>
-                 <span onClick={() => router.push("/trade/USD_SOL")} className='cursor-pointer hover:text-gray-600'>Trade</span>
+                 <span onClick={() => router.push("/trade/SOL_USDC")} className='cursor-pointer hover:text-gray-600'>Trade</span>
                </div>
             <div className="flex items-center space-x-6 rtl:space-x-reverse">
                 {/* <Button text='Get Started' baseColor='red' />
