@@ -1,45 +1,83 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
+import { ChartManager } from '../utils/ChartManager';
+import { KLine } from '../utils/types';
+import SignalingManager from '../utils/SignalingManager';
+import { getkLines } from '../utils/httpClient';
+import parseKline from '../utils/parsekline';
+import { timeStamp } from 'console';
 // import { createChart } from 'lightweight-charts';
 // import { getkLines } from '../utils/httpClient';
 // import type { KLine } from '../utils/types';
 
-const TradeView = () => {
-  // const chartRef = useRef<HTMLDivElement | null>(null);
-  // const seriesRef = useRef<any>(null);
+const TradeView = ({ market }: { market: string }) => {
+  const chartRef = useRef<HTMLDivElement>(null)
+  const chartManagerRef = useRef<ChartManager>(null);
 
-  // const [formattedData, setFormattedData] = useState<KLine[] | null>(null);
+  useEffect(() => {
+    const init = async() => {
+      try {
+        let KlineRaw = [];
+        KlineRaw = await  getkLines("SOLUSDC", 150);
+        const KlineData: KLine[] = parseKline(KlineRaw);
+        // SignalingManager.getInstace().registerCallback("kline", (data: KLine) => {
+         if(chartRef){
+           if(chartManagerRef.current)
+            chartManagerRef.current.destroy();
+          }
+          // KlineData.push(data);
+          // if(KlineData.length > 40) KlineData.shift();
 
-  // 1. Create chart once when ref is ready
-  // useEffect(() => {
-  //   if (!chartRef.current) return;
+          const chartManager = new ChartManager(
+            chartRef.current,
+            [...KlineData.map((x) => ({
+              close: parseFloat(x.close),
+              high: parseFloat(x.high),
+              low: parseFloat(x.low),
+              open: parseFloat(x.open),
+              timestamp: new Date(x.end)
+            }))
+            //   ...data?.map((x) => ({
+            //     close: parseFloat(x.close),
+            //     high: parseFloat(x.high),
+            //     low: parseFloat(x.low),
+            //      open: parseFloat(x.open),
+            //      timestamp: new Date(x.end),
+            //   })
+            // ),
+            ].sort((x,y) => (x.timestamp < y.timestamp ? -1 : 1)) || [],
+            {
+               background: "#0e0f14",
+            color: "white",
+            }
+          )
+          chartManagerRef.current = chartManager;
 
-  //   const chart = createChart(chartRef.current, {
-  //     width: 600,
-  //     height: 400,
-  //   });
+        // }, `KLINE-${market}`);
 
-  //   seriesRef.current = chart.addCandlestickSeries();
+        SignalingManager.getInstace().sendMessage({"method":"SUBSCRIBE","params":["solusdc@kline_1d"],"id":3});
+      } catch (e) { }
 
-  // }, []);
+    }
 
-  // 2. Fetch data
-  // useEffect(() => {
-  //   getkLines("1h").then((res) => setFormattedData(res));
-  // }, []);
+    init();
 
-  // // 3. Update chart when data arrives
-  // useEffect(() => {
-  //   if (!formattedData || !seriesRef.current) return;
-  //   seriesRef.current.setData(formattedData);
-  // }, [formattedData]);
+    return () => {
+       SignalingManager.getInstace().sendMessage({"method":"UNSUBSCRIBE","params":["solusdc@kline_1d"],"id":3});
+       SignalingManager.getInstace().deRegisterCallback("kline", `KLINE-${market}`);
+          
+    }
+  }, [market, chartRef]);
+  
+  
 
   return (
+    <>
     <div
-      // ref={chartRef}
-      className="chartarea bg-gray-900 text-white flex items-center justify-center col-span-6 min-h-full"
+      ref={chartRef}
+      className="chartarea bg-gray-900 text-white flex items-center justify-center col-span-6"
     >
-      Chart Area
     </div>
+    </>
   );
 };
 

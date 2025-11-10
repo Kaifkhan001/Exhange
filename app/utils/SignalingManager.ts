@@ -71,6 +71,19 @@ export default class SignalingManager{
                         }
                 })
                }
+               if(type == "kline"){
+                this.callbacks[type].forEach(({ callback }: { callback: any }) => {
+                    const val = message.data.k;
+                  const data = {
+                    close: val.c,
+                    high: val.h,
+                    low: val.l,
+                    open: val.o,
+                    end: val.T
+                  }
+                  callback(data);
+                })
+               }
             }
         }
     }

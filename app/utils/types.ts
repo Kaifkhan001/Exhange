@@ -15,20 +15,16 @@ export interface Trade {
 
 
 export interface KLine {
-    openTime: number;
-    open: string;
+    close: string;
+    end: string;
     high: string;
     low: string;
-    close: string;
+    open: string;
+    quoteVolume: string;
+    start: string;
+    trades: string;
     volume: string;
-    closeTime: number;
-    quoteAssetVolume: string;
-    numberOfTrades: number;
-    takerBuyBaseAssetVolume: string;
-    takerBuyQuoteAssetVolume: string;
-    ignore: string;
 }
-
 
 export interface Tickers {
     firstPrice: string;

@@ -15,9 +15,11 @@ export async function getTrades(market: string): Promise<Trade[]>{
 }
 
 
-export async function getkLines( interval: string, market?: string, startTime?: number, endTime?: number): Promise<KLine[]>{
-    const res = await axios.get(`https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval=${interval}`);
-    return res.data;
+export async function getkLines(market: string, limit: number ): Promise<KLine[]>{
+    const res = await axios.get(`https://api.binance.com/api/v3/klines?symbol=${market}&interval=1h&limit=${limit}`);
+    const data: KLine[] = res.data;
+
+    return data.sort((x,y) => (Number(x.end) < Number(y.end) ? -1 : 1))
 }
 
 export async function getTickers(market: string){
