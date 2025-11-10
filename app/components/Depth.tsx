@@ -12,7 +12,6 @@ const Depth = ({ market }: {market: string}) => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-      console.log("Started running:- ");
       SignalingManager.getInstace().registerCallback("depthUpdate", (data: any) => {
       setPrice(
        ((Number(data.bids[0][0]) + Number(data.asks[0][0])) / 2).toString());
@@ -51,13 +50,7 @@ const Depth = ({ market }: {market: string}) => {
           }
           return updatedAsks;
         });
-        console.log("Asks:- ", asks);
-        console.log("Bids:- ", bids);
       }, `DEPTH-${market}`);
-
-     console.log("Asks and bids:- ",)
-     console.log(asks)
-     console.log(bids);
       SignalingManager.getInstace().sendMessage({"method":"SUBSCRIBE","params":["!miniTicker@arr@3000ms","solusdc@depth"],"id":130}	)
       return () => {
            SignalingManager.getInstace().sendMessage({"method":"UNSUBSCRIBE","params":["!miniTicker@arr@3000ms","solusdc@depth"],"id":130});

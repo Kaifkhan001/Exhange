@@ -28,7 +28,6 @@ export default class SignalingManager{
     init(){
         this.ws.onopen = () => {
             this.intialized = true;
-            console.log("Connection made");
             if(this.bufferedMessages.length > 0){
                 this.bufferedMessages.forEach((message) => {
                     this.ws.send(JSON.stringify(message));
@@ -38,9 +37,7 @@ export default class SignalingManager{
 
         this.ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
-            console.log("Message:- ", message);
             const type = message.data?.e ?? message.data[0].e;
-            console.log("Type in each case:- ", type);
             if(this.callbacks[type]){
                if(type == "depthUpdate"){
                  this.callbacks[type].forEach(({ callback }: { callback: any}) => {
@@ -89,7 +86,6 @@ export default class SignalingManager{
     }
 
     sendMessage(message: any){
-        console.log("Message subscribed:- ", message);
         const messageToSend = {
             ...message,
             id : this.id++
